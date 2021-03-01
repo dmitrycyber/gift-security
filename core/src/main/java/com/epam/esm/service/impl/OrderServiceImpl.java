@@ -1,8 +1,8 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.jpa.GiftCertificateRepository;
-import com.epam.esm.jpa.OrderRepository;
-import com.epam.esm.jpa.UserRepository;
+import com.epam.esm.jpa.spring_data.GiftCertificateJpaRepository;
+import com.epam.esm.jpa.spring_data.OrderJpaRepository;
+import com.epam.esm.jpa.spring_data.UserJpaRepository;
 import com.epam.esm.model.dto.order.OrderDto;
 import com.epam.esm.model.entity.GiftCertificateEntity;
 import com.epam.esm.model.entity.OrderEntity;
@@ -10,6 +10,8 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.util.EntityConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +22,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderServiceImpl implements OrderService {
-    private final OrderRepository orderRepository;
-    private final GiftCertificateRepository giftCertificateRepository;
-    private final UserRepository userRepository;
+    private final OrderJpaRepository orderJpaRepository;
+    private final GiftCertificateJpaRepository giftCertificateJpaRepository;
+    private final UserJpaRepository userJpaRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<OrderDto> findAll(Integer pageNumber, Integer pageSize) {
-        List<OrderEntity> orderEntityList = orderRepository.findAll(pageNumber, pageSize);
+        Page<OrderEntity> page = orderJpaRepository.findAll(PageRequest.of(pageNumber - 1, pageSize));
+
+        List<OrderEntity> orderEntityList = page.get().collect(Collectors.toList());
         return orderEntityList.stream()
                 .map(EntityConverter::convertOrderEntityToDto)
                 .collect(Collectors.toList());
@@ -36,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderDto> findByUserId(Long userId, Integer pageNumber, Integer pageSize) {
-        List<OrderEntity> orderEntityList = orderRepository.findByUserId(userId, pageNumber, pageSize);
+        List<OrderEntity> orderEntityList = orderJpaRepository.findOrderEntityByUserId(userId, PageRequest.of(pageNumber, pageSize));
         return orderEntityList.stream()
                 .map(EntityConverter::convertOrderEntityToDto)
                 .collect(Collectors.toList());
@@ -45,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public OrderDto findById(Long orderId) {
-        OrderEntity orderEntity = orderRepository.findById(orderId);
+        OrderEntity orderEntity = orderJpaRepository.findOrderEntityById(orderId);
 
         return EntityConverter.convertOrderEntityToDto(orderEntity);
     }
@@ -54,13 +58,13 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto createOrder(OrderDto orderDto) {
         Long giftId = orderDto.getGiftId();
-        GiftCertificateEntity giftCertificateEntity = giftCertificateRepository.findById(giftId);
-        userRepository.findById(orderDto.getUserId());
+        GiftCertificateEntity giftCertificateEntity = giftCertificateJpaRepository.findGiftCertificateEntityById(giftId);
+        userJpaRepository.findById(orderDto.getUserId());
 
         OrderEntity orderEntity = EntityConverter.convertOrderDtoToEntity(orderDto);
         orderEntity.setCost(giftCertificateEntity.getPrice());
 
-        OrderEntity savedOrder = orderRepository.createOrder(orderEntity);
+        OrderEntity savedOrder = orderJpaRepository.save(orderEntity);
 
         return EntityConverter.convertOrderEntityToDto(savedOrder);
     }

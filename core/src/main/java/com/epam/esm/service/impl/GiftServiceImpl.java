@@ -1,8 +1,7 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.jpa.GiftCertificateRepository;
-import com.epam.esm.jpa.TagRepository;
 import com.epam.esm.jpa.exception.GiftNotFoundException;
+import com.epam.esm.jpa.spring_data.specification.CertificateSpecification;
 import com.epam.esm.jpa.spring_data.GiftCertificateJpaRepository;
 import com.epam.esm.jpa.spring_data.TagJpaRepository;
 import com.epam.esm.model.dto.search.GiftSearchDto;
@@ -31,22 +30,16 @@ import java.util.stream.Collectors;
 public class GiftServiceImpl implements GiftService {
     private final GiftCertificateJpaRepository giftCertificateJpaRepository;
     private final TagJpaRepository tagJpaRepository;
-    private final GiftCertificateRepository giftCertificateRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<GiftCertificateDto> getAllGifts(Integer pageNumber, Integer pageSize) {
-        List<GiftCertificateEntity> giftCertificateEntityList;
-        if (pageNumber == null || pageSize == null){
-            giftCertificateEntityList = giftCertificateJpaRepository.findAll();
-        }
-        else {
-            Page<GiftCertificateEntity> giftCertificateEntityPage = giftCertificateJpaRepository.findAll(PageRequest.of(pageNumber - 1, pageSize));
+        Page<GiftCertificateEntity> giftCertificateEntityPage = giftCertificateJpaRepository.findAll(PageRequest.of(pageNumber - 1, pageSize));
 
-            giftCertificateEntityList = giftCertificateEntityPage
-                    .get()
-                    .collect(Collectors.toList());
-        }
+        List<GiftCertificateEntity> giftCertificateEntityList = giftCertificateEntityPage
+                .get()
+                .collect(Collectors.toList());
+
 
         return giftCertificateEntityList.stream()
                 .map(EntityConverter::convertGiftEntityToDto)
@@ -56,8 +49,14 @@ public class GiftServiceImpl implements GiftService {
     @Override
     @Transactional(readOnly = true)
     public List<GiftCertificateDto> searchGifts(GiftSearchDto customSearchRequest, Integer pageNumber, Integer pageSize) {
-        List<GiftCertificateEntity> giftList = giftCertificateRepository.findAndSortGifts(customSearchRequest, pageNumber, pageSize);
-        return giftList.stream()
+        Page<GiftCertificateEntity> page = giftCertificateJpaRepository.findAll(
+                CertificateSpecification.bySearchRequest(customSearchRequest)
+                , PageRequest.of(pageNumber - 1, pageSize));
+
+        List<GiftCertificateEntity> giftCertificateEntityList = page.get()
+                .collect(Collectors.toList());
+
+        return giftCertificateEntityList.stream()
                 .map(EntityConverter::convertGiftEntityToDto)
                 .collect(Collectors.toList());
     }

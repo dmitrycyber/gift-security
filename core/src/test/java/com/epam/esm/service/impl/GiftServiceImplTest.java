@@ -30,6 +30,7 @@ import java.util.stream.LongStream;
 class GiftServiceImplTest {
     @Mock
     private GiftCertificateRepository giftCertificateRepository;
+
     @Mock
     private TagRepository tagRepository;
 

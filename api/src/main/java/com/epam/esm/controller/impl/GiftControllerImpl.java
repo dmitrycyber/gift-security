@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
 
@@ -40,7 +42,10 @@ public class GiftControllerImpl implements GiftController {
     @GetMapping
     @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
             " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
-    public ResponseEntity<List<GiftCertificateDto>> allGifts(@Valid GiftSearchDto giftSearchDto, Integer pageNumber, Integer pageSize) {
+    public ResponseEntity<List<GiftCertificateDto>> allGifts(
+            @Valid GiftSearchDto giftSearchDto,
+            @RequestParam Integer pageNumber,
+            @RequestParam Integer pageSize) {
         List<GiftCertificateDto> allGifts = !defaultCustomSearchRequest.equals(giftSearchDto)
                 ? giftService.searchGifts(giftSearchDto, pageNumber, pageSize)
                 : giftService.getAllGifts(pageNumber, pageSize);

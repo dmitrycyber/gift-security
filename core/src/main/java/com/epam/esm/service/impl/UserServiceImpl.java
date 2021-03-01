@@ -1,6 +1,5 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.jpa.UserRepository;
 import com.epam.esm.jpa.spring_data.UserJpaRepository;
 import com.epam.esm.model.dto.user.UserDto;
 import com.epam.esm.model.entity.UserEntity;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
     private final UserJpaRepository userJpaRepository;
     private final PasswordEncoder passwordEncoder;
 
