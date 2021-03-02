@@ -4,7 +4,6 @@ import com.epam.esm.controller.GiftController;
 import com.epam.esm.model.dto.CreatingDto;
 import com.epam.esm.model.dto.search.GiftSearchDto;
 import com.epam.esm.model.dto.GiftCertificateDto;
-import com.epam.esm.model.dto.TagDto;
 import com.epam.esm.service.GiftService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/gifts")

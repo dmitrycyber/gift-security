@@ -1,12 +1,8 @@
 package com.epam.esm.jpa.impl;
 
-import com.epam.esm.jpa.GiftCertificateRepository;
 import com.epam.esm.jpa.criteria.GiftCriteriaBuilder;
-import com.epam.esm.jpa.exception.GiftNotFoundException;
-import com.epam.esm.jpa.spring_data.GiftCertificateJpaRepository;
-import com.epam.esm.model.dto.search.GiftSearchDto;
+import com.epam.esm.jpa.GiftCertificateJpaRepository;
 import com.epam.esm.model.entity.GiftCertificateEntity;
-import com.epam.esm.model.entity.TagEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @DataJpaTest
 @ContextConfiguration(classes = {

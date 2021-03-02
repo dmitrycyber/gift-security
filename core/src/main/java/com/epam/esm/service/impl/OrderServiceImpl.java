@@ -1,11 +1,14 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.jpa.spring_data.GiftCertificateJpaRepository;
-import com.epam.esm.jpa.spring_data.OrderJpaRepository;
-import com.epam.esm.jpa.spring_data.UserJpaRepository;
+import com.epam.esm.jpa.exception.GiftNotFoundException;
+import com.epam.esm.jpa.exception.UserNotFoundException;
+import com.epam.esm.jpa.GiftCertificateJpaRepository;
+import com.epam.esm.jpa.OrderJpaRepository;
+import com.epam.esm.jpa.UserJpaRepository;
 import com.epam.esm.model.dto.order.OrderDto;
 import com.epam.esm.model.entity.GiftCertificateEntity;
 import com.epam.esm.model.entity.OrderEntity;
+import com.epam.esm.model.entity.UserEntity;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.util.EntityConverter;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderDto> findByUserId(Long userId, Integer pageNumber, Integer pageSize) {
-        List<OrderEntity> orderEntityList = orderJpaRepository.findOrderEntityByUserId(userId, PageRequest.of(pageNumber, pageSize));
+        List<OrderEntity> orderEntityList = orderJpaRepository.findOrderEntityByUserId(userId, PageRequest.of(pageNumber - 1, pageSize));
         return orderEntityList.stream()
                 .map(EntityConverter::convertOrderEntityToDto)
                 .collect(Collectors.toList());
@@ -58,8 +61,16 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto createOrder(OrderDto orderDto) {
         Long giftId = orderDto.getGiftId();
+        Long userId = orderDto.getUserId();
         GiftCertificateEntity giftCertificateEntity = giftCertificateJpaRepository.findGiftCertificateEntityById(giftId);
-        userJpaRepository.findById(orderDto.getUserId());
+        UserEntity userEntity = userJpaRepository.findUserEntityById(userId);
+
+        if (giftCertificateEntity == null) {
+            throw new GiftNotFoundException(giftId.toString());
+        }
+        if (userEntity == null) {
+            throw new UserNotFoundException(userId.toString());
+        }
 
         OrderEntity orderEntity = EntityConverter.convertOrderDtoToEntity(orderDto);
         orderEntity.setCost(giftCertificateEntity.getPrice());

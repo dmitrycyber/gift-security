@@ -39,7 +39,7 @@ public class DefaultExceptionHandler {
     public ResponseEntity<ErrorResponse> handleConflict(RuntimeException ex, WebRequest webRequest, HttpServletRequest request) {
         String message = messageSource.getMessage(Status.DEFAULT.getCode().toString(), null, webRequest.getLocale());
 
-        return getErrorResponseResponseEntity(request, ex, webRequest, Status.DEFAULT, HttpStatus.INTERNAL_SERVER_ERROR, message);
+        return getErrorResponseResponseEntity(request, ex, Status.DEFAULT, HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 
     @ExceptionHandler(GiftNotFoundException.class)
@@ -49,7 +49,7 @@ public class DefaultExceptionHandler {
 
         String resultMessage = errorMessageNotFoundById(message, ex);
 
-        return getErrorResponseResponseEntity(request, ex, webRequest, Status.GIFT_NOT_FOUND, HttpStatus.NOT_FOUND, resultMessage);
+        return getErrorResponseResponseEntity(request, ex, Status.GIFT_NOT_FOUND, HttpStatus.NOT_FOUND, resultMessage);
     }
 
     @ExceptionHandler(TagNotFoundException.class)
@@ -59,7 +59,7 @@ public class DefaultExceptionHandler {
 
         String resultMessage = errorMessageNotFoundById(message, ex);
 
-        return getErrorResponseResponseEntity(request, ex, webRequest, Status.TAG_NOT_FOUND, HttpStatus.NOT_FOUND, resultMessage);
+        return getErrorResponseResponseEntity(request, ex, Status.TAG_NOT_FOUND, HttpStatus.NOT_FOUND, resultMessage);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -69,7 +69,7 @@ public class DefaultExceptionHandler {
 
         String resultMessage = errorMessageNotFoundById(message, ex);
 
-        return getErrorResponseResponseEntity(request, ex, webRequest, Status.USER_NOT_FOUND, HttpStatus.NOT_FOUND, resultMessage);
+        return getErrorResponseResponseEntity(request, ex, Status.USER_NOT_FOUND, HttpStatus.NOT_FOUND, resultMessage);
     }
 
     @ExceptionHandler(OrderNotFoundException.class)
@@ -79,7 +79,7 @@ public class DefaultExceptionHandler {
 
         String resultMessage = errorMessageNotFoundById(message, ex);
 
-        return getErrorResponseResponseEntity(request, ex, webRequest, Status.ORDER_NOT_FOUND, HttpStatus.NOT_FOUND, resultMessage);
+        return getErrorResponseResponseEntity(request, ex, Status.ORDER_NOT_FOUND, HttpStatus.NOT_FOUND, resultMessage);
     }
 
     @ExceptionHandler(TagNameRegisteredException.class)
@@ -87,7 +87,7 @@ public class DefaultExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTagNameRegistered(HttpServletRequest request, HttpServletResponse response, Exception ex, WebRequest webRequest) {
         String message = messageSource.getMessage(Status.TAG_NAME_ALREADY_REGISTERED.getCode().toString(), null, webRequest.getLocale());
 
-        return getErrorResponseResponseEntity(request, ex, webRequest, Status.TAG_NAME_ALREADY_REGISTERED, HttpStatus.CONFLICT, message);
+        return getErrorResponseResponseEntity(request, ex, Status.TAG_NAME_ALREADY_REGISTERED, HttpStatus.CONFLICT, message);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -106,7 +106,7 @@ public class DefaultExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    private ResponseEntity<ErrorResponse> getErrorResponseResponseEntity(HttpServletRequest request, Exception ex, WebRequest webRequest, Status status, HttpStatus httpStatus, String message) {
+    private ResponseEntity<ErrorResponse> getErrorResponseResponseEntity(HttpServletRequest request, Exception ex, Status status, HttpStatus httpStatus, String message) {
         log.error("AT URI: " + request.getRequestURI() + " HANDLE EXCEPTION: " + ex);
 
         ErrorResponse body = ErrorResponse.builder()

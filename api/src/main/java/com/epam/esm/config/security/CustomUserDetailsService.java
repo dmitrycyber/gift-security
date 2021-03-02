@@ -1,7 +1,7 @@
 package com.epam.esm.config.security;
 
 import com.epam.esm.jpa.exception.UserNotFoundException;
-import com.epam.esm.jpa.spring_data.UserJpaRepository;
+import com.epam.esm.jpa.UserJpaRepository;
 import com.epam.esm.model.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +20,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByPhoneNumber(username);
 
-        if (userEntity == null){
+        if (userEntity == null) {
             throw new UserNotFoundException();
         }
-
         return CustomUserDetails.fromUserEntityToCustomUserDetails(userEntity);
     }
 }

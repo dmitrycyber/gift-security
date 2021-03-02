@@ -1,6 +1,6 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.jpa.UserRepository;
+import com.epam.esm.jpa.UserJpaRepository;
 import com.epam.esm.model.dto.user.UserDto;
 import com.epam.esm.model.entity.UserEntity;
 import org.junit.jupiter.api.Assertions;
@@ -11,7 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.LongStream;
@@ -19,7 +24,10 @@ import java.util.stream.LongStream;
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
     @Mock
-    private UserRepository userRepository;
+    private UserJpaRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -27,39 +35,57 @@ class UserServiceImplTest {
     private Integer pageNumber;
     private Integer pageSize;
     private List<UserEntity> userEntityList;
+    private Timestamp currentTimestamp;
+    private PageRequest pageRequest;
+    private Page page;
 
     @BeforeEach
     public void init() {
         pageNumber = 1;
         pageSize = 5;
         userEntityList = new ArrayList<>();
+        currentTimestamp = new Timestamp(System.currentTimeMillis());
+        pageRequest = PageRequest.of(pageNumber - 1, pageSize);
 
         LongStream.range(1, 6)
                 .forEach(index -> {
                     userEntityList.add(UserEntity.builder()
                             .id(index)
                             .phoneNumber("+375291847896")
+                            .password("eyqwe.mzc;vzxcvlizjxcvljn,n")
                             .email("mail@mail.com")
                             .firstName("Ivan")
                             .lastName("Ivanov")
+                            .createDate(currentTimestamp)
+                            .lastUpdate(currentTimestamp)
                             .build());
                 });
+        page = new PageImpl<>(userEntityList);
     }
 
     @Test
     void register() {
-        Mockito.when(userRepository.register(Mockito.any(UserEntity.class))).thenReturn(userEntityList.get(0));
-
         String expectedPhoneNumber = "+375291847896";
+        String expectedPassword = "123--password";
+        String expectedEncodedPassword = "eyqwe.mzc;vzxcvlizjxcvljn,n";
         String expectedEmail = "mail@mail.com";
         String expectedName = "Ivan";
         String expectedLastName = "Ivanov";
-        UserDto userDto = userService.register(UserDto.builder()
+
+        UserDto userToSave = UserDto.builder()
                 .phoneNumber(expectedPhoneNumber)
+                .password(expectedPassword)
                 .email(expectedEmail)
                 .firstName(expectedName)
                 .lastName(expectedLastName)
-                .build());
+                .build();
+
+        Mockito.when(userRepository.save(Mockito.any(UserEntity.class)))
+                .thenReturn(userEntityList.get(0));
+
+        Mockito.when(passwordEncoder.encode(expectedPassword)).thenReturn(expectedEncodedPassword);
+
+        UserDto userDto = userService.register(userToSave);
 
         Assertions.assertNotNull(userDto);
         Assertions.assertNotNull(userDto.getId());
@@ -77,7 +103,7 @@ class UserServiceImplTest {
     @Test
     void userProfile() {
         long id = 1L;
-        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(userEntityList.get(0));
+        Mockito.when(userRepository.findUserEntityById(Mockito.anyLong())).thenReturn(userEntityList.get(0));
 
         UserDto userDto = userService.userProfile(id);
 
@@ -92,7 +118,7 @@ class UserServiceImplTest {
 
     @Test
     void findAll() {
-        Mockito.when(userRepository.findAll(pageNumber, pageSize)).thenReturn(userEntityList);
+        Mockito.when(userRepository.findAll(pageRequest)).thenReturn(page);
         List<UserDto> userDtoList = userService.findAll(pageNumber, pageSize);
 
         Assertions.assertEquals(5, userDtoList.size());

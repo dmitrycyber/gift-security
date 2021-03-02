@@ -7,7 +7,6 @@ import com.epam.esm.model.dto.user.UserDto;
 import com.epam.esm.service.GiftService;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
-import com.epam.esm.util.UserType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -33,7 +32,7 @@ public class CustomContextRefreshListener implements ApplicationListener<Context
     private final GiftService giftService;
 
     @Override
-//    @Transactional
+    @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
         createUsers();
         createGiftsWithTags();

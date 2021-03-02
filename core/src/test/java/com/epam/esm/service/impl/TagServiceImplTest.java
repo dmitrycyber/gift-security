@@ -1,6 +1,6 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.jpa.TagRepository;
+import com.epam.esm.jpa.TagJpaRepository;
 import com.epam.esm.model.dto.TagDto;
 import com.epam.esm.model.dto.search.TagSearchDto;
 import com.epam.esm.model.entity.TagEntity;
@@ -12,15 +12,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 @ExtendWith(MockitoExtension.class)
 class TagServiceImplTest {
     @Mock
-    private TagRepository tagRepository;
+    private TagJpaRepository tagRepository;
 
     @InjectMocks
     private TagServiceImpl tagService;
@@ -28,29 +33,28 @@ class TagServiceImplTest {
     private Integer pageNumber;
     private Integer pageSize;
     private List<TagEntity> tagEntityList;
+    private PageRequest pageRequest;
+    private Page page;
 
     @BeforeEach
     public void init() {
         pageNumber = 1;
         pageSize = 5;
-        tagEntityList = new ArrayList<>();
-        tagEntityList.add(TagEntity.builder()
-                .id(1L)
-                .name("name1")
-                .build());
-        tagEntityList.add(TagEntity.builder()
-                .id(2L)
-                .name("name2")
-                .build());
-        tagEntityList.add(TagEntity.builder()
-                .id(3L)
-                .name("name3")
-                .build());
+        pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+
+        tagEntityList = LongStream.range(1, 4)
+                .mapToObj(index -> TagEntity.builder()
+                        .id(index)
+                        .name("name" + index)
+                        .build())
+                .collect(Collectors.toList());
+
+        page = new PageImpl<>(tagEntityList);
     }
 
     @Test
     void getAllTags() {
-        Mockito.when(tagRepository.findAllTags(pageNumber, pageSize)).thenReturn(tagEntityList);
+        Mockito.when(tagRepository.findAll(pageRequest)).thenReturn(page);
         List<TagDto> allTags = tagService.getAllTags(pageNumber, pageSize);
 
         Assertions.assertEquals(3, allTags.size());
@@ -64,7 +68,10 @@ class TagServiceImplTest {
 
     @Test
     void getTagByPartName() {
-        Mockito.when(tagRepository.findAllTags(Mockito.any(TagSearchDto.class), Mockito.anyInt(), Mockito.anyInt())).thenReturn(tagEntityList);
+        Mockito
+                .when(tagRepository.findAll(Mockito.any(Specification.class), Mockito.any(PageRequest.class)))
+                .thenReturn(page);
+
         List<TagDto> allTags = tagService.getTagByPartName(TagSearchDto.builder()
                 .tagName("name")
                 .build(), pageNumber, pageSize);
@@ -78,10 +85,7 @@ class TagServiceImplTest {
     @Test
     void getTagById() {
         long id = 1L;
-        Mockito.when(tagRepository.findTagById(Mockito.anyLong())).thenReturn(TagEntity.builder()
-                .id(id)
-                .name("name1")
-                .build());
+        Mockito.when(tagRepository.findTagEntityById(Mockito.anyLong())).thenReturn(tagEntityList.get(0));
 
         TagDto tagById = tagService.getTagById(id);
 
@@ -91,12 +95,9 @@ class TagServiceImplTest {
 
     @Test
     void getTagByName() {
-        TagEntity tagEntity = TagEntity.builder()
-                .id(1L)
-                .name("name1")
-                .build();
+        String expectedName = "name1";
 
-        Mockito.when(tagRepository.findTagByName(Mockito.anyString())).thenReturn(Optional.ofNullable(tagEntity));
+        Mockito.when(tagRepository.findByName(expectedName)).thenReturn(Optional.ofNullable(tagEntityList.get(0)));
         TagDto tagDto = tagService.getTagByName("name1");
 
         Assertions.assertEquals("name1", tagDto.getName());
@@ -104,7 +105,7 @@ class TagServiceImplTest {
 
     @Test
     void createTag() {
-        Mockito.when(tagRepository.createTag(Mockito.any(TagEntity.class))).thenReturn(tagEntityList.get(0));
+        Mockito.when(tagRepository.save(Mockito.any(TagEntity.class))).thenReturn(tagEntityList.get(0));
 
         TagDto tagDto = tagService.createTag(TagDto.builder()
                 .name("name1")
@@ -118,6 +119,6 @@ class TagServiceImplTest {
     void deleteTagById() {
         Long id = 1L;
         tagService.deleteTagById(id);
-        Mockito.verify(tagRepository, Mockito.times(1)).deleteTagById(Mockito.anyLong());
+        Mockito.verify(tagRepository, Mockito.times(1)).deleteById(Mockito.anyLong());
     }
 }

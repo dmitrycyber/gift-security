@@ -1,8 +1,8 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.jpa.exception.TagNameRegisteredException;
-import com.epam.esm.jpa.spring_data.TagJpaRepository;
-import com.epam.esm.jpa.spring_data.specification.TagSpecification;
+import com.epam.esm.jpa.TagJpaRepository;
+import com.epam.esm.jpa.specification.TagSpecification;
 import com.epam.esm.model.dto.TagDto;
 import com.epam.esm.model.dto.search.TagSearchDto;
 import com.epam.esm.model.entity.TagEntity;

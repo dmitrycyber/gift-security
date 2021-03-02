@@ -1,9 +1,9 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.jpa.exception.GiftNotFoundException;
-import com.epam.esm.jpa.spring_data.specification.CertificateSpecification;
-import com.epam.esm.jpa.spring_data.GiftCertificateJpaRepository;
-import com.epam.esm.jpa.spring_data.TagJpaRepository;
+import com.epam.esm.jpa.specification.CertificateSpecification;
+import com.epam.esm.jpa.GiftCertificateJpaRepository;
+import com.epam.esm.jpa.TagJpaRepository;
 import com.epam.esm.model.dto.search.GiftSearchDto;
 import com.epam.esm.model.dto.GiftCertificateDto;
 import com.epam.esm.model.entity.GiftCertificateEntity;
@@ -39,7 +39,6 @@ public class GiftServiceImpl implements GiftService {
         List<GiftCertificateEntity> giftCertificateEntityList = giftCertificateEntityPage
                 .get()
                 .collect(Collectors.toList());
-
 
         return giftCertificateEntityList.stream()
                 .map(EntityConverter::convertGiftEntityToDto)

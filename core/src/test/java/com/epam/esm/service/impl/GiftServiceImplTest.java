@@ -1,12 +1,15 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.jpa.GiftCertificateRepository;
-import com.epam.esm.jpa.TagRepository;
+import com.epam.esm.jpa.GiftCertificateJpaRepository;
+import com.epam.esm.jpa.TagJpaRepository;
+import com.epam.esm.jpa.specification.CertificateSpecification;
 import com.epam.esm.model.dto.GiftCertificateDto;
 import com.epam.esm.model.dto.TagDto;
 import com.epam.esm.model.dto.search.GiftSearchDto;
 import com.epam.esm.model.entity.GiftCertificateEntity;
+import com.epam.esm.model.entity.OrderEntity;
 import com.epam.esm.model.entity.TagEntity;
+import com.epam.esm.model.entity.UserEntity;
 import com.epam.esm.util.EntityConverter;
 import com.epam.esm.util.SearchConstants;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -29,10 +36,10 @@ import java.util.stream.LongStream;
 @ExtendWith(MockitoExtension.class)
 class GiftServiceImplTest {
     @Mock
-    private GiftCertificateRepository giftCertificateRepository;
+    private GiftCertificateJpaRepository giftCertificateRepository;
 
     @Mock
-    private TagRepository tagRepository;
+    private TagJpaRepository tagRepository;
 
     @InjectMocks
     private GiftServiceImpl giftService;
@@ -43,11 +50,14 @@ class GiftServiceImplTest {
     private GiftCertificateEntity giftCertificateEntity;
     private Integer pageNumber;
     private Integer pageSize;
+    private PageRequest pageRequest;
+    private Page page;
 
     @BeforeEach
     public void init() {
         pageNumber = 1;
         pageSize = 5;
+        pageRequest = PageRequest.of(pageNumber - 1, pageSize);
 
         currentTimestamp = new Timestamp(System.currentTimeMillis());
         giftCertificateEntityList = new ArrayList<>();
@@ -58,6 +68,7 @@ class GiftServiceImplTest {
                         .name("name" + index)
                         .build())
                 .collect(Collectors.toSet());
+
 
         LongStream.range(1, 6)
                 .forEach(index -> {
@@ -72,7 +83,20 @@ class GiftServiceImplTest {
                             .tagEntities(tags)
                             .build());
                 });
+
         giftCertificateEntity = giftCertificateEntityList.get(0);
+
+        Set<OrderEntity> orderEntities = LongStream.range(1, 6)
+                .mapToObj(index -> OrderEntity.builder()
+                        .id(index)
+                        .giftCertificateEntity(giftCertificateEntity)
+                        .userEntity(UserEntity.builder().build())
+                        .purchaseDate(currentTimestamp)
+                        .cost(123)
+                        .build())
+                .collect(Collectors.toSet());
+
+        giftCertificateEntity.setOrderEntities(orderEntities);
 
         searchGiftCertificateEntityList = new ArrayList<>();
         searchGiftCertificateEntityList.add(GiftCertificateEntity.builder()
@@ -85,11 +109,12 @@ class GiftServiceImplTest {
                 .lastUpdate(currentTimestamp)
                 .tagEntities(tags)
                 .build());
+        page = new PageImpl<>(giftCertificateEntityList);
     }
 
     @Test
     void getAllGifts() {
-        Mockito.when(giftCertificateRepository.findAll(pageNumber, pageSize)).thenReturn(giftCertificateEntityList);
+        Mockito.when(giftCertificateRepository.findAll(pageRequest)).thenReturn(page);
 
         List<GiftCertificateDto> allGifts = giftService.getAllGifts(pageNumber, pageSize);
 
@@ -131,8 +156,10 @@ class GiftServiceImplTest {
                 .sortMethod(SearchConstants.DESC_METHOD_SORT)
                 .build();
 
-        Mockito.when(giftCertificateRepository.findAndSortGifts(customSearchRequest, pageNumber, pageSize))
-                .thenReturn(searchGiftCertificateEntityList);
+//        Mockito.when(giftCertificateRepository.findAll(CertificateSpecification.bySearchRequest(customSearchRequest), pageRequest))
+//                .thenReturn(page);
+        Mockito.when(giftCertificateRepository.findAll(Mockito.any(Specification.class), Mockito.any(PageRequest.class)))
+                .thenReturn(page);
 
         List<GiftCertificateDto> giftCertificateDtoList = giftService.searchGifts(customSearchRequest, pageNumber, pageSize);
         GiftCertificateDto giftCertificateDto = giftCertificateDtoList.get(0);
@@ -144,10 +171,11 @@ class GiftServiceImplTest {
         Assertions.assertEquals(expectedDescription, giftCertificateDto.getDescription());
     }
 
+    //
     @Test
     void getGiftById() {
         long id = 1L;
-        Mockito.when(giftCertificateRepository.findById(id)).thenReturn(giftCertificateEntity);
+        Mockito.when(giftCertificateRepository.findGiftCertificateEntityById(id)).thenReturn(giftCertificateEntity);
 
         GiftCertificateDto giftById = giftService.getGiftById(id);
 
@@ -173,9 +201,9 @@ class GiftServiceImplTest {
                 .duration(1)
                 .tags(tags)
                 .build();
-        Mockito.when(tagRepository.createTag(Mockito.any(TagEntity.class))).thenReturn(TagEntity.builder()
+        Mockito.when(tagRepository.save(Mockito.any(TagEntity.class))).thenReturn(TagEntity.builder()
                 .build());
-        Mockito.when(giftCertificateRepository.createGift(EntityConverter.convertGiftDtoToEntity(dtoToSave)))
+        Mockito.when(giftCertificateRepository.save(EntityConverter.convertGiftDtoToEntity(dtoToSave)))
                 .thenReturn(giftCertificateEntity);
 
         GiftCertificateDto giftCertificateDto = giftService.createGift(dtoToSave);
@@ -187,9 +215,10 @@ class GiftServiceImplTest {
         Assertions.assertEquals(1, giftCertificateDto.getDuration());
     }
 
+    //
     @Test
     void updateGift() {
-        Mockito.when(giftCertificateRepository.findById(Mockito.any())).thenReturn(giftCertificateEntity);
+        Mockito.when(giftCertificateRepository.findGiftCertificateEntityById(Mockito.any())).thenReturn(giftCertificateEntity);
         Set<TagDto> tags = new HashSet<>();
         tags.add(TagDto.builder()
                 .name("tagName")
@@ -215,10 +244,10 @@ class GiftServiceImplTest {
     void deleteGiftById() {
         Long id = 1L;
 
-        Mockito.when(giftCertificateRepository.findById(id)).thenReturn(giftCertificateEntity);
+        Mockito.when(giftCertificateRepository.findGiftCertificateEntityById(id)).thenReturn(giftCertificateEntity);
 
         giftService.deleteGiftById(id);
 
-        Mockito.verify(giftCertificateRepository, Mockito.times(1)).deleteGift(Mockito.anyLong());
+        Mockito.verify(giftCertificateRepository, Mockito.times(1)).deleteById(Mockito.anyLong());
     }
 }

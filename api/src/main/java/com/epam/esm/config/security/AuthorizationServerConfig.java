@@ -19,7 +19,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-    private String clientId = "tutorialspoint";
+    private String clientId = "gift-security";
     private String clientSecret = "my-secret-key";
     private String privateKey = "private key";
     private String publicKey = "public key";
@@ -57,7 +57,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         clients
                 .inMemory()
                 .withClient(clientId)
-//                .secret(clientSecret)
                 .scopes("read", "write")
                 .authorizedGrantTypes("password", "refresh_token")
                 .accessTokenValiditySeconds(20000)
