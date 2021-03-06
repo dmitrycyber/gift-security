@@ -28,7 +28,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto register(UserDto userDto) {
         UserEntity userEntity = EntityConverter.convertUserDtoToEntity(userDto);
-        System.out.println("SERVICE " + userEntity);
 
         userEntity.setRole(UserType.ROLE_USER.name());
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
@@ -49,15 +48,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<UserDto> findAll(Integer pageNumber, Integer pageSize) {
-        List<UserEntity> userEntityList;
+        List<UserEntity> userEntityList = userJpaRepository.findAll(pageNumber, pageSize);
 
-        if (pageNumber == null || pageSize == null) {
-            userEntityList = userJpaRepository.findAll();
-        } else {
-            Page<UserEntity> usersPage = userJpaRepository.findAll(PageRequest.of(pageNumber - 1, pageSize));
-
-            userEntityList = usersPage.get().collect(Collectors.toList());
-        }
         return userEntityList.stream()
                 .map(EntityConverter::convertUserEntityToDto)
                 .collect(Collectors.toList());

@@ -1,8 +1,8 @@
 package com.epam.esm.jpa.specification;
 
-import com.epam.esm.jpa.criteria.DaoConstants;
 import com.epam.esm.model.dto.search.GiftSearchDto;
 import com.epam.esm.model.entity.GiftCertificateEntity;
+import com.epam.esm.util.DaoConstants;
 import com.epam.esm.util.SearchConstants;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -12,37 +12,6 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class CertificateSpecification {
-    public static Specification<GiftCertificateEntity> giftNameLike(String giftNamePrefix, String sortField, String sortMethod) {
-        return (root, query, criteriaBuilder) -> {
-            defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
-
-            return criteriaBuilder.like(root.get(DaoConstants.GIFT_FIELD_NAME),
-                    DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD + giftNamePrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
-        };
-    }
-
-    public static Specification<GiftCertificateEntity> giftDescriptionLike(String giftDescriptionPrefix, String sortField, String sortMethod) {
-
-        return (root, query, criteriaBuilder) -> {
-            defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
-
-            return criteriaBuilder.like(root.get(DaoConstants.GIFT_FIELD_DESCRIPTION),
-                    DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD + giftDescriptionPrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
-        };
-    }
-
-    public static Specification<GiftCertificateEntity> giftTagNamePrefixesLike(List<String> tagNames, String sortField, String sortMethod) {
-        return (Specification<GiftCertificateEntity>) (root, query, criteriaBuilder) -> {
-            defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
-
-            return criteriaBuilder
-                    .in(root
-                            .join(DaoConstants.GIFT_FIELD_TAG_ENTITIES)
-                            .get(DaoConstants.GIFT_FIELD_NAME))
-                    .value(tagNames);
-        };
-    }
-
     public static Specification<GiftCertificateEntity> bySearchRequest(GiftSearchDto giftSearchDto) {
         String giftNamePrefix = giftSearchDto.getNamePrefix();
         String giftDescriptionPrefix = giftSearchDto.getDescriptionPrefix();
@@ -67,6 +36,37 @@ public class CertificateSpecification {
         }
 
         return finalSpec;
+    }
+
+    private static Specification<GiftCertificateEntity> giftNameLike(String giftNamePrefix, String sortField, String sortMethod) {
+        return (root, query, criteriaBuilder) -> {
+            defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
+
+            return criteriaBuilder.like(root.get(DaoConstants.GIFT_FIELD_NAME),
+                    DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD + giftNamePrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
+        };
+    }
+
+    private static Specification<GiftCertificateEntity> giftDescriptionLike(String giftDescriptionPrefix, String sortField, String sortMethod) {
+
+        return (root, query, criteriaBuilder) -> {
+            defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
+
+            return criteriaBuilder.like(root.get(DaoConstants.GIFT_FIELD_DESCRIPTION),
+                    DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD + giftDescriptionPrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
+        };
+    }
+
+    private static Specification<GiftCertificateEntity> giftTagNamePrefixesLike(List<String> tagNames, String sortField, String sortMethod) {
+        return (Specification<GiftCertificateEntity>) (root, query, criteriaBuilder) -> {
+            defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
+
+            return criteriaBuilder
+                    .in(root
+                            .join(DaoConstants.GIFT_FIELD_TAG_ENTITIES)
+                            .get(DaoConstants.GIFT_FIELD_NAME))
+                    .value(tagNames);
+        };
     }
 
     private static void defineSortMethodAndColumn(String sortField, String sortMethod, Root<GiftCertificateEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {

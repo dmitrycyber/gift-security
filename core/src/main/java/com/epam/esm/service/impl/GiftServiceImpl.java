@@ -34,11 +34,7 @@ public class GiftServiceImpl implements GiftService {
     @Override
     @Transactional(readOnly = true)
     public List<GiftCertificateDto> getAllGifts(Integer pageNumber, Integer pageSize) {
-        Page<GiftCertificateEntity> giftCertificateEntityPage = giftCertificateJpaRepository.findAll(PageRequest.of(pageNumber - 1, pageSize));
-
-        List<GiftCertificateEntity> giftCertificateEntityList = giftCertificateEntityPage
-                .get()
-                .collect(Collectors.toList());
+        List<GiftCertificateEntity> giftCertificateEntityList = giftCertificateJpaRepository.findAll(pageNumber, pageSize);
 
         return giftCertificateEntityList.stream()
                 .map(EntityConverter::convertGiftEntityToDto)

@@ -54,7 +54,7 @@ class TagServiceImplTest {
 
     @Test
     void getAllTags() {
-        Mockito.when(tagRepository.findAll(pageRequest)).thenReturn(page);
+        Mockito.when(tagRepository.findAll(pageNumber, pageSize)).thenReturn(tagEntityList);
         List<TagDto> allTags = tagService.getAllTags(pageNumber, pageSize);
 
         Assertions.assertEquals(3, allTags.size());

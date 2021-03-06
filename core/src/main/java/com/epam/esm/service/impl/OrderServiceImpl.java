@@ -32,9 +32,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderDto> findAll(Integer pageNumber, Integer pageSize) {
-        Page<OrderEntity> page = orderJpaRepository.findAll(PageRequest.of(pageNumber - 1, pageSize));
+        List<OrderEntity> orderEntityList = orderJpaRepository.findAll(pageNumber, pageSize);
 
-        List<OrderEntity> orderEntityList = page.get().collect(Collectors.toList());
         return orderEntityList.stream()
                 .map(EntityConverter::convertOrderEntityToDto)
                 .collect(Collectors.toList());

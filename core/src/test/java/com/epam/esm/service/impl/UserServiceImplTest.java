@@ -118,7 +118,7 @@ class UserServiceImplTest {
 
     @Test
     void findAll() {
-        Mockito.when(userRepository.findAll(pageRequest)).thenReturn(page);
+        Mockito.when(userRepository.findAll(pageNumber, pageSize)).thenReturn(userEntityList);
         List<UserDto> userDtoList = userService.findAll(pageNumber, pageSize);
 
         Assertions.assertEquals(5, userDtoList.size());

@@ -114,7 +114,7 @@ class GiftServiceImplTest {
 
     @Test
     void getAllGifts() {
-        Mockito.when(giftCertificateRepository.findAll(pageRequest)).thenReturn(page);
+        Mockito.when(giftCertificateRepository.findAll(pageNumber, pageSize)).thenReturn(giftCertificateEntityList);
 
         List<GiftCertificateDto> allGifts = giftService.getAllGifts(pageNumber, pageSize);
 

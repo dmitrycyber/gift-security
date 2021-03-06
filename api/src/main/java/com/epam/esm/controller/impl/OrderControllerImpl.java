@@ -31,8 +31,8 @@ public class OrderControllerImpl implements OrderController {
     @Override
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_USER.name()) " +
+            "or hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public List<OrderDto> allOrders(
             Long userId,
             Integer pageNumber, Integer pageSize) {
@@ -46,8 +46,8 @@ public class OrderControllerImpl implements OrderController {
     @Override
     @GetMapping("/{orderId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_USER.name()) " +
+            "or hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public OrderDto orderById(@PathVariable Long orderId) {
         OrderDto orderDto = orderService.findById(orderId);
         addSelfLinks(orderDto);
@@ -57,8 +57,8 @@ public class OrderControllerImpl implements OrderController {
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_USER.name()) " +
+            "or hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public OrderDto createOrder(@RequestBody @Valid @Validated(CreatingDto.class) OrderDto orderDto) {
         OrderDto savedOrder = orderService.createOrder(orderDto);
         addSelfLinks(savedOrder);

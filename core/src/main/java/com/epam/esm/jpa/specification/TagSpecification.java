@@ -1,6 +1,6 @@
 package com.epam.esm.jpa.specification;
 
-import com.epam.esm.jpa.criteria.DaoConstants;
+import com.epam.esm.util.DaoConstants;
 import com.epam.esm.model.dto.search.TagSearchDto;
 import com.epam.esm.model.entity.TagEntity;
 import org.springframework.data.jpa.domain.Specification;

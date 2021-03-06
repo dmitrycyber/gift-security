@@ -28,12 +28,9 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional(readOnly = true)
     public List<TagDto> getAllTags(Integer pageNumber, Integer pageSize) {
-        Page<TagEntity> tagEntityPage = tagJpaRepository.findAll(PageRequest.of(pageNumber - 1, pageSize));
+        List<TagEntity> tagEntityList = tagJpaRepository.findAll(pageNumber, pageSize);
 
-        List<TagEntity> allTags = tagEntityPage.get()
-                .collect(Collectors.toList());
-
-        return allTags.stream()
+        return tagEntityList.stream()
                 .map(EntityConverter::convertTagEntityToDto)
                 .collect(Collectors.toList());
     }
@@ -41,9 +38,12 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional(readOnly = true)
     public List<TagDto> getTagByPartName(TagSearchDto tagSearchDto, Integer pageNumber, Integer pageSize) {
-        Page<TagEntity> tagEntityPage = tagJpaRepository.findAll(TagSpecification.bySearchDto(tagSearchDto), PageRequest.of(pageNumber - 1, pageSize));
+        Page<TagEntity> tagEntityPage = tagJpaRepository
+                .findAll(TagSpecification.bySearchDto(tagSearchDto), PageRequest.of(pageNumber - 1, pageSize));
 
-        List<TagEntity> tagByName = tagEntityPage.get().collect(Collectors.toList());
+        List<TagEntity> tagByName = tagEntityPage
+                .get()
+                .collect(Collectors.toList());
 
         return tagByName.stream()
                 .map(EntityConverter::convertTagEntityToDto)

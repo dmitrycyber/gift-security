@@ -72,7 +72,7 @@ class OrderServiceImplTest {
 
     @Test
     void findAll() {
-        Mockito.when(orderRepository.findAll(pageRequest)).thenReturn(page);
+        Mockito.when(orderRepository.findAll(pageNumber, pageSize)).thenReturn(orderEntityList);
         List<OrderDto> orderDtoList = orderService.findAll(pageNumber, pageSize);
         Assertions.assertEquals(5, orderDtoList.size());
         orderDtoList

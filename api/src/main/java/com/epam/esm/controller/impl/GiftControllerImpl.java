@@ -37,8 +37,6 @@ public class GiftControllerImpl implements GiftController {
 
     @Override
     @GetMapping
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public ResponseEntity<List<GiftCertificateDto>> allGifts(
             @Valid GiftSearchDto giftSearchDto,
             @RequestParam Integer pageNumber,
@@ -53,8 +51,8 @@ public class GiftControllerImpl implements GiftController {
 
     @Override
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_USER.name()) " +
+            "or hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public ResponseEntity<GiftCertificateDto> giftById(@PathVariable Long id) {
         GiftCertificateDto giftById = giftService.getGiftById(id);
 
@@ -64,8 +62,7 @@ public class GiftControllerImpl implements GiftController {
 
     @Override
     @PostMapping
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public ResponseEntity<GiftCertificateDto> createGift(
             @RequestBody @Valid @Validated(CreatingDto.class) GiftCertificateDto giftCertificateDto) {
         log.info("DTO TO SAVE " + giftCertificateDto);
@@ -78,8 +75,7 @@ public class GiftControllerImpl implements GiftController {
 
     @Override
     @PatchMapping("/{id}")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public ResponseEntity<GiftCertificateDto> updateGift(
             @PathVariable Long id,
             @RequestBody @Valid GiftCertificateDto giftCertificateDto) {
@@ -94,8 +90,7 @@ public class GiftControllerImpl implements GiftController {
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public void deleteGift(
             @PathVariable Long id
     ) {

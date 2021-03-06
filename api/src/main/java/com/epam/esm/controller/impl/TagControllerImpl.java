@@ -33,8 +33,8 @@ public class TagControllerImpl implements TagController {
 
     @Override
     @GetMapping
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_USER.name()) " +
+            "or hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public ResponseEntity<List<TagDto>> allTags(@Valid TagSearchDto tagSearchDto, Integer pageNumber, Integer pageSize) {
         List<TagDto> tags = !defaultTagSearchDto.equals(tagSearchDto)
                 ? tagService.getTagByPartName(tagSearchDto, pageNumber, pageSize)
@@ -45,8 +45,8 @@ public class TagControllerImpl implements TagController {
 
     @Override
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_USER.name()) " +
+            "or hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public ResponseEntity<TagDto> tagById(
             @PathVariable Long id
     ) {
@@ -57,8 +57,7 @@ public class TagControllerImpl implements TagController {
 
     @Override
     @PostMapping
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public ResponseEntity<TagDto> createTag(@RequestBody @Valid TagDto tagDto) {
         TagDto createdTag = tagService.createTag(tagDto);
         addSelfLinks(createdTag);
@@ -68,8 +67,7 @@ public class TagControllerImpl implements TagController {
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public void deleteTag(@PathVariable Long id) {
         tagService.deleteTagById(id);
     }
@@ -77,8 +75,7 @@ public class TagControllerImpl implements TagController {
     @Override
     @GetMapping("/widely-used/user")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public TagDto findMostWidelyUsedUserTag() {
         TagDto tagDto = tagService.findMostWidelyUsedUserTag();
         addSelfLinks(tagDto);

@@ -1,6 +1,5 @@
 package com.epam.esm.jpa.impl;
 
-import com.epam.esm.jpa.criteria.GiftCriteriaBuilder;
 import com.epam.esm.jpa.GiftCertificateJpaRepository;
 import com.epam.esm.model.entity.GiftCertificateEntity;
 import org.junit.jupiter.api.Assertions;
@@ -18,8 +17,7 @@ import java.util.List;
 
 @DataJpaTest
 @ContextConfiguration(classes = {
-        GiftCertificateRepository.class,
-        GiftCriteriaBuilder.class
+        GiftCertificateJpaRepository.class
 })
 @EnableJpaRepositories("com.epam.esm.jpa")
 @EntityScan(basePackages = {"com.epam.esm.model.entity"})

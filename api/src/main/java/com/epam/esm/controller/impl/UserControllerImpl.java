@@ -34,8 +34,6 @@ public class UserControllerImpl implements UserController {
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public UserDto register(@RequestBody @Valid @Validated(CreatingDto.class) UserDto userDto) {
         UserDto savedUser = userService.register(userDto);
         addSelfLinks(savedUser);
@@ -45,8 +43,8 @@ public class UserControllerImpl implements UserController {
     @Override
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_USER.name()) " +
+            "or hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public UserDto getUser(@PathVariable Long id) {
         UserDto userDto = userService.userProfile(id);
         addSelfLinks(userDto);
@@ -56,8 +54,7 @@ public class UserControllerImpl implements UserController {
     @Override
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority(T(com.epam.esm.util.UserType).ROLE_USER.name())" +
-            " or hasAuthority(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public List<UserDto> allUsers(Integer pageNumber, Integer pageSize) {
         List<UserDto> userDtoList = userService.findAll(pageNumber, pageSize);
         userDtoList.forEach(this::addSelfLinks);
