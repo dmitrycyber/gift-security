@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @NoRepositoryBean
 public interface BaseRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
 
-    default List<T> findAll(Integer pageNumber, Integer pageSize){
+    default List<T> findAll(Integer pageNumber, Integer pageSize) {
         Page<T> page = findAll(PageRequest.of(pageNumber - 1, pageSize));
         return page
                 .get()

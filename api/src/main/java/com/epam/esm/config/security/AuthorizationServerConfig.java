@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -38,7 +39,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -68,7 +69,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .withClient(clientId)
                 .secret(passwordEncoder.encode(clientSecret))
                 .scopes(ProjectConstants.READ_SCOPE, ProjectConstants.WRITE_SCOPE)
-                .authorizedGrantTypes(ProjectConstants.GRAND_TYPE_PASSWORD, ProjectConstants.GRAND_TYPE_REFRESH)
+                .authorizedGrantTypes(ProjectConstants.GRAND_TYPE_PASSWORD, ProjectConstants.GRAND_TYPE_REFRESH, "implicit", "client_credentials", "authorization_code")
                 .accessTokenValiditySeconds(accessTokenValiditySeconds)
                 .refreshTokenValiditySeconds(refreshTokenValiditySeconds);
     }

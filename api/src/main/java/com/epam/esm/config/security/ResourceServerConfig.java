@@ -5,6 +5,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
@@ -13,6 +15,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http
                 .httpBasic().disable()
                 .csrf().disable()
+                .anonymous().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()

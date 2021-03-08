@@ -16,6 +16,7 @@ public interface OrderJpaRepository extends BaseRepository<OrderEntity, Long> {
      */
     @Query("select oe from OrderEntity oe where oe.userEntity.id = :userId")
     List<OrderEntity> findOrderEntityByUserId(Long userId, Pageable pageable);
+
     /**
      * Find orders by order id
      *
