@@ -16,57 +16,51 @@ public class CertificateSpecification {
         String giftNamePrefix = giftSearchDto.getNamePrefix();
         String giftDescriptionPrefix = giftSearchDto.getDescriptionPrefix();
         List<String> tagNamePrefixes = giftSearchDto.getTagNamePrefixes();
+        String sortField = giftSearchDto.getSortField();
+        String sortMethod = giftSearchDto.getSortMethod();
 
-        Specification<GiftCertificateEntity> finalSpec = (Specification<GiftCertificateEntity>) (root, query, criteriaBuilder) -> null;
+        Specification<GiftCertificateEntity> specificationBeforeOrdering = (Specification<GiftCertificateEntity>) (root, query, criteriaBuilder) -> null;
 
         if (giftNamePrefix != null) {
-            finalSpec = Specification
-                    .where(finalSpec
-                            .and(giftNameLike(giftNamePrefix, giftSearchDto.getSortField(), giftSearchDto.getSortMethod())));
+            specificationBeforeOrdering = Specification
+                    .where(specificationBeforeOrdering
+                            .and(giftNameLike(giftNamePrefix)));
         }
         if (giftDescriptionPrefix != null) {
-            finalSpec = Specification
-                    .where(finalSpec
-                            .and(giftDescriptionLike(giftDescriptionPrefix, giftSearchDto.getSortField(), giftSearchDto.getSortMethod())));
+            specificationBeforeOrdering = Specification
+                    .where(specificationBeforeOrdering
+                            .and(giftDescriptionLike(giftDescriptionPrefix)));
         }
         if (tagNamePrefixes != null) {
-            finalSpec = Specification
-                    .where(finalSpec
-                            .and(giftTagNamePrefixesLike(tagNamePrefixes, giftSearchDto.getSortField(), giftSearchDto.getSortMethod())));
+            specificationBeforeOrdering = Specification
+                    .where(specificationBeforeOrdering
+                            .and(giftTagNamePrefixesLike(tagNamePrefixes)));
         }
 
-        return finalSpec;
-    }
-
-    private static Specification<GiftCertificateEntity> giftNameLike(String giftNamePrefix, String sortField, String sortMethod) {
+        Specification<GiftCertificateEntity> finalSpecification = specificationBeforeOrdering;
         return (root, query, criteriaBuilder) -> {
             defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
 
-            return criteriaBuilder.like(root.get(DaoConstants.GIFT_FIELD_NAME),
-                    giftNamePrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
+            return finalSpecification.toPredicate(root, query, criteriaBuilder);
         };
     }
 
-    private static Specification<GiftCertificateEntity> giftDescriptionLike(String giftDescriptionPrefix, String sortField, String sortMethod) {
-
-        return (root, query, criteriaBuilder) -> {
-            defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
-
-            return criteriaBuilder.like(root.get(DaoConstants.GIFT_FIELD_DESCRIPTION),
-                    giftDescriptionPrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
-        };
+    private static Specification<GiftCertificateEntity> giftNameLike(String giftNamePrefix) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(DaoConstants.GIFT_FIELD_NAME),
+                giftNamePrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
     }
 
-    private static Specification<GiftCertificateEntity> giftTagNamePrefixesLike(List<String> tagNames, String sortField, String sortMethod) {
-        return (Specification<GiftCertificateEntity>) (root, query, criteriaBuilder) -> {
-            defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
+    private static Specification<GiftCertificateEntity> giftDescriptionLike(String giftDescriptionPrefix) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(DaoConstants.GIFT_FIELD_DESCRIPTION),
+                giftDescriptionPrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
+    }
 
-            return criteriaBuilder
-                    .in(root
-                            .join(DaoConstants.GIFT_FIELD_TAG_ENTITIES)
-                            .get(DaoConstants.TAG_FIELD_NAME))
-                    .value(tagNames);
-        };
+    private static Specification<GiftCertificateEntity> giftTagNamePrefixesLike(List<String> tagNames) {
+        return (Specification<GiftCertificateEntity>) (root, query, criteriaBuilder) -> criteriaBuilder
+                .in(root
+                        .join(DaoConstants.GIFT_FIELD_TAG_ENTITIES)
+                        .get(DaoConstants.TAG_FIELD_NAME))
+                .value(tagNames);
     }
 
     private static void defineSortMethodAndColumn(String sortField, String sortMethod, Root<GiftCertificateEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {

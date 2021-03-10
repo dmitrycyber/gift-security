@@ -15,7 +15,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
+import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
@@ -49,6 +51,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         endpoints
                 .tokenStore(tokenStore())
                 .accessTokenConverter(accessTokenConverter())
+                .tokenEnhancer(accessTokenConverter())
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);
     }
@@ -90,7 +93,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
+        DefaultUserAuthenticationConverter duac = new DefaultUserAuthenticationConverter();
+        duac.setUserDetailsService(userDetailsService);
+
+        DefaultAccessTokenConverter datc = new DefaultAccessTokenConverter();
+        datc.setUserTokenConverter(duac);
+
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        converter.setAccessTokenConverter(datc);
         converter.setSigningKey(ProjectConstants.JWT_SIGNING_KEY);
         return converter;
     }

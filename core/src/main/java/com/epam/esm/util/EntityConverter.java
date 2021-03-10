@@ -119,6 +119,9 @@ public class EntityConverter {
     }
 
     public static OrderDto convertOrderEntityToDto(OrderEntity orderEntity) {
+        if (orderEntity == null){
+            return null;
+        }
         Timestamp purchaseDate = orderEntity.getPurchaseDate();
         GiftCertificateEntity giftCertificateEntity = orderEntity.getGiftCertificateEntity();
         return OrderDto.builder()

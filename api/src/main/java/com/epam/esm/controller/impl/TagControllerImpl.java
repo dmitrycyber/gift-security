@@ -2,6 +2,7 @@ package com.epam.esm.controller.impl;
 
 import com.epam.esm.controller.TagController;
 import com.epam.esm.model.dto.TagDto;
+import com.epam.esm.model.dto.search.PaginationDto;
 import com.epam.esm.model.dto.search.TagSearchDto;
 import com.epam.esm.service.TagService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -34,7 +37,12 @@ public class TagControllerImpl implements TagController {
     @Override
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<TagDto>> allTags(@Valid TagSearchDto tagSearchDto, Integer pageNumber, Integer pageSize) {
+    public ResponseEntity<List<TagDto>> allTags(
+            @Valid TagSearchDto tagSearchDto,
+            @Valid PaginationDto paginationDto) {
+        Integer pageNumber = paginationDto.getPageNumber();
+        Integer pageSize = paginationDto.getPageSize();
+
         List<TagDto> tags = !defaultTagSearchDto.equals(tagSearchDto)
                 ? tagService.getTagByPartName(tagSearchDto, pageNumber, pageSize)
                 : tagService.getAllTags(pageNumber, pageSize);

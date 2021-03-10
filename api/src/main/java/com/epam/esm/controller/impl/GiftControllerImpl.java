@@ -4,12 +4,14 @@ import com.epam.esm.controller.GiftController;
 import com.epam.esm.model.dto.CreatingDto;
 import com.epam.esm.model.dto.search.GiftSearchDto;
 import com.epam.esm.model.dto.GiftCertificateDto;
+import com.epam.esm.model.dto.search.PaginationDto;
 import com.epam.esm.service.GiftService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +26,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -39,9 +42,11 @@ public class GiftControllerImpl implements GiftController {
     @Override
     @GetMapping
     public ResponseEntity<List<GiftCertificateDto>> allGifts(
-            @Valid GiftSearchDto giftSearchDto,
-            @RequestParam Integer pageNumber,
-            @RequestParam Integer pageSize) {
+            @Valid PaginationDto paginationDto,
+            @Valid GiftSearchDto giftSearchDto) {
+        Integer pageNumber = paginationDto.getPageNumber();
+        Integer pageSize = paginationDto.getPageSize();
+
         List<GiftCertificateDto> allGifts = !defaultCustomSearchRequest.equals(giftSearchDto)
                 ? giftService.searchGifts(giftSearchDto, pageNumber, pageSize)
                 : giftService.getAllGifts(pageNumber, pageSize);

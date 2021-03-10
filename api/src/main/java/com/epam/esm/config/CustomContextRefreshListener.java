@@ -43,8 +43,8 @@ public class CustomContextRefreshListener implements ApplicationListener<Context
         LongStream.range(1, 1001)
                 .forEach(index -> {
                     OrderDto orderDto = OrderDto.builder()
-                            .giftId(ThreadLocalRandom.current().nextLong(50, 500))
-                            .userId(ThreadLocalRandom.current().nextLong(1, 70))
+                            .giftId(ThreadLocalRandom.current().nextLong(2004, 2599))
+                            .userId(ThreadLocalRandom.current().nextLong(102, 199))
                             .build();
                     orderService.createOrder(orderDto);
                 });

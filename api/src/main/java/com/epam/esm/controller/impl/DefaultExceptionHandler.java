@@ -1,5 +1,6 @@
 package com.epam.esm.controller.impl;
 
+import com.epam.esm.jpa.exception.CustomAccessDeniedException;
 import com.epam.esm.jpa.exception.DaoException;
 import com.epam.esm.jpa.exception.GiftNotFoundException;
 import com.epam.esm.jpa.exception.OrderNotFoundException;
@@ -7,6 +8,7 @@ import com.epam.esm.jpa.exception.TagNotFoundException;
 import com.epam.esm.jpa.exception.UserNotFoundException;
 import com.epam.esm.jpa.exception.TagNameRegisteredException;
 import com.epam.esm.model.dto.ErrorResponse;
+import com.epam.esm.model.dto.SpringErrorResponse;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.util.Status;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,6 +25,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +34,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultExceptionHandler {
+    private final static String ACCESS_DENIED_ERROR = "access_denied";
+    private final static String ACCESS_DENIED_ERROR_DESCRIPTION = "Access denied";
     private final MessageSource messageSource;
 
     @ExceptionHandler(value = {
@@ -90,8 +96,27 @@ public class DefaultExceptionHandler {
         return getErrorResponseResponseEntity(request, ex, Status.TAG_NAME_ALREADY_REGISTERED, HttpStatus.CONFLICT, message);
     }
 
+    @ExceptionHandler(CustomAccessDeniedException.class)
+    public ResponseEntity<SpringErrorResponse> handleAccessDenied() {
+        SpringErrorResponse springErrorResponse = SpringErrorResponse.builder()
+                .error(ACCESS_DENIED_ERROR)
+                .errorDescription(ACCESS_DENIED_ERROR_DESCRIPTION)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(springErrorResponse);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> validationErrorHandler(MethodArgumentNotValidException e) {
+        return getErrorResponseResponseEntity(e);
+    }
+
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<ErrorResponse> validationErrorHandler(BindException e) {
+        return getErrorResponseResponseEntity(e);
+    }
+
+    private ResponseEntity<ErrorResponse> getErrorResponseResponseEntity(BindException e) {
         List<String> errorList = e.getBindingResult()
                 .getFieldErrors()
                 .stream()

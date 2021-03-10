@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.model.dto.TagDto;
+import com.epam.esm.model.dto.search.PaginationDto;
 import com.epam.esm.model.dto.search.TagSearchDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,10 +16,8 @@ public interface TagController {
     ResponseEntity<List<TagDto>> allTags(
             @ApiParam(name = "tagSearchDto", value = "Search tags by parameters")
                     TagSearchDto tagSearchDto,
-            @ApiParam(name = "pageNumber", value = "pagination page number")
-                    Integer pageNumber,
-            @ApiParam(name = "pageNumber", value = "pagination page size")
-                    Integer pageSize);
+            @ApiParam(name = "paginationDto", value = "pagination page object")
+                    PaginationDto paginationDto);
 
     @ApiOperation(value = "Api v1. Get tag by id")
     ResponseEntity<TagDto> tagById(Long id);
