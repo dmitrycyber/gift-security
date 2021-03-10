@@ -156,9 +156,7 @@ class GiftServiceImplTest {
                 .sortMethod(SearchConstants.DESC_METHOD_SORT)
                 .build();
 
-//        Mockito.when(giftCertificateRepository.findAll(CertificateSpecification.bySearchRequest(customSearchRequest), pageRequest))
-//                .thenReturn(page);
-        Mockito.when(giftCertificateRepository.findAll(Mockito.any(Specification.class), Mockito.any(PageRequest.class)))
+        Mockito.when(giftCertificateRepository.findAll(Mockito.any(Specification.class), Mockito.eq(pageRequest)))
                 .thenReturn(page);
 
         List<GiftCertificateDto> giftCertificateDtoList = giftService.searchGifts(customSearchRequest, pageNumber, pageSize);

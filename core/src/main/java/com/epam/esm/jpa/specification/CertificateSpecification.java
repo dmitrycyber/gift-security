@@ -43,7 +43,7 @@ public class CertificateSpecification {
             defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
 
             return criteriaBuilder.like(root.get(DaoConstants.GIFT_FIELD_NAME),
-                    DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD + giftNamePrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
+                    giftNamePrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
         };
     }
 
@@ -53,7 +53,7 @@ public class CertificateSpecification {
             defineSortMethodAndColumn(sortField, sortMethod, root, query, criteriaBuilder);
 
             return criteriaBuilder.like(root.get(DaoConstants.GIFT_FIELD_DESCRIPTION),
-                    DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD + giftDescriptionPrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
+                    giftDescriptionPrefix + DaoConstants.ZERO_OR_MORE_ELEMENTS_WILDCARD);
         };
     }
 
@@ -64,7 +64,7 @@ public class CertificateSpecification {
             return criteriaBuilder
                     .in(root
                             .join(DaoConstants.GIFT_FIELD_TAG_ENTITIES)
-                            .get(DaoConstants.GIFT_FIELD_NAME))
+                            .get(DaoConstants.TAG_FIELD_NAME))
                     .value(tagNames);
         };
     }

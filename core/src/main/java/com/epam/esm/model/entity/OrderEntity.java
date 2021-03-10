@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -21,6 +22,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "orders")
+@SuperBuilder
 public class OrderEntity extends BaseEntity {
     private Integer cost;
     private Timestamp purchaseDate;
@@ -32,15 +34,6 @@ public class OrderEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
-
-    @Builder
-    public OrderEntity(Long id, Timestamp lastUpdate, Timestamp createDate, Integer cost, Timestamp purchaseDate, GiftCertificateEntity giftCertificateEntity, UserEntity userEntity) {
-        super(id, lastUpdate, createDate);
-        this.cost = cost;
-        this.purchaseDate = purchaseDate;
-        this.giftCertificateEntity = giftCertificateEntity;
-        this.userEntity = userEntity;
-    }
 
     @PrePersist
     protected void onCreate() {

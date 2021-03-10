@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -25,19 +26,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tags")
+@SuperBuilder
 public class TagEntity extends BaseEntity {
 
     private String name;
 
     @ManyToMany(mappedBy = "tagEntities")
     private Set<GiftCertificateEntity> giftCertificateEntities;
-
-    @Builder
-    public TagEntity(Long id, Timestamp lastUpdate, Timestamp createDate, String name, Set<GiftCertificateEntity> giftCertificateEntities) {
-        super(id, lastUpdate, createDate);
-        this.name = name;
-        this.giftCertificateEntities = giftCertificateEntities;
-    }
 
     @PreRemove
     private void removeTagsFromGifts() {

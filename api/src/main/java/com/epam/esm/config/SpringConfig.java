@@ -27,9 +27,6 @@ import java.util.List;
 import java.util.Locale;
 
 @Configuration
-@PropertySource({
-        "classpath:${spring.profiles.active}.db.properties",
-        "classpath:application.properties"})
 @EnableTransactionManagement
 public class SpringConfig implements WebMvcConfigurer {
     @Bean

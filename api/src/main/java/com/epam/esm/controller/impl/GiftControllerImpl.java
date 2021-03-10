@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @RestController
@@ -51,8 +52,6 @@ public class GiftControllerImpl implements GiftController {
 
     @Override
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_USER.name()) " +
-            "or hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
     public ResponseEntity<GiftCertificateDto> giftById(@PathVariable Long id) {
         GiftCertificateDto giftById = giftService.getGiftById(id);
 

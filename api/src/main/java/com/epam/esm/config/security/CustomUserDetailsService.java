@@ -23,6 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (userEntity == null) {
             throw new UserNotFoundException();
         }
-        return CustomUserDetails.fromUserEntityToCustomUserDetails(userEntity);
+        return new CustomUserDetails(userEntity);
     }
 }

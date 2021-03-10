@@ -60,7 +60,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .checkTokenAccess(ProjectConstants.IS_AUTHENTICATED_METHOD)
                 .allowFormAuthenticationForClients()
                 .passwordEncoder(passwordEncoder);
-    }
+    } 
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {

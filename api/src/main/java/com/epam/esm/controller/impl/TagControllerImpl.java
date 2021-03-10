@@ -33,8 +33,7 @@ public class TagControllerImpl implements TagController {
 
     @Override
     @GetMapping
-    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_USER.name()) " +
-            "or hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<TagDto>> allTags(@Valid TagSearchDto tagSearchDto, Integer pageNumber, Integer pageSize) {
         List<TagDto> tags = !defaultTagSearchDto.equals(tagSearchDto)
                 ? tagService.getTagByPartName(tagSearchDto, pageNumber, pageSize)
@@ -45,8 +44,7 @@ public class TagControllerImpl implements TagController {
 
     @Override
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole(T(com.epam.esm.util.UserType).ROLE_USER.name()) " +
-            "or hasRole(T(com.epam.esm.util.UserType).ROLE_ADMIN.name())")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<TagDto> tagById(
             @PathVariable Long id
     ) {

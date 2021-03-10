@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -24,6 +25,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
+@SuperBuilder
 public class UserEntity extends BaseEntity {
 
     private String firstName;
@@ -35,16 +37,4 @@ public class UserEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<OrderEntity> orderEntities;
-
-    @Builder
-    public UserEntity(Long id, Timestamp lastUpdate, Timestamp createDate, String firstName, String lastName, String email, String phoneNumber, String password, String role, Set<OrderEntity> orderEntities) {
-        super(id, lastUpdate, createDate);
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.password = password;
-        this.role = role;
-        this.orderEntities = orderEntities;
-    }
 }

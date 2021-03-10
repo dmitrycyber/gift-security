@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
@@ -30,6 +31,7 @@ import java.util.Set;
         "tagEntities",
         "orderEntities"
 })
+@SuperBuilder
 @Table(name = "gift_certificates")
 public class GiftCertificateEntity extends BaseEntity {
 
@@ -53,15 +55,4 @@ public class GiftCertificateEntity extends BaseEntity {
             CascadeType.REFRESH
     }, fetch = FetchType.LAZY)
     private Set<OrderEntity> orderEntities;
-
-    @Builder
-    public GiftCertificateEntity(Long id, Timestamp lastUpdate, Timestamp createDate, String name, String description, Integer price, Integer duration, Set<TagEntity> tagEntities, Set<OrderEntity> orderEntities) {
-        super(id, lastUpdate, createDate);
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.duration = duration;
-        this.tagEntities = tagEntities;
-        this.orderEntities = orderEntities;
-    }
 }
