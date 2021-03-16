@@ -72,7 +72,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .withClient(clientId)
                 .secret(passwordEncoder.encode(clientSecret))
                 .scopes(ProjectConstants.READ_SCOPE, ProjectConstants.WRITE_SCOPE)
-                .authorizedGrantTypes(ProjectConstants.GRAND_TYPE_PASSWORD, ProjectConstants.GRAND_TYPE_REFRESH, "implicit", "client_credentials", "authorization_code")
+                .authorizedGrantTypes(ProjectConstants.GRAND_TYPE_PASSWORD, ProjectConstants.GRAND_TYPE_REFRESH)
                 .accessTokenValiditySeconds(accessTokenValiditySeconds)
                 .refreshTokenValiditySeconds(refreshTokenValiditySeconds);
     }

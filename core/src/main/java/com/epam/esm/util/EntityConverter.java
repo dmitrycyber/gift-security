@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class EntityConverter {
 
     public static GiftCertificateDto convertGiftEntityToDto(GiftCertificateEntity source) {
+        //TODO CHECK
         Set<TagEntity> tags = source.getTagEntities();
         Set<TagDto> tagDtoSet = null;
 

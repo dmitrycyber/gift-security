@@ -58,7 +58,7 @@ class GiftCertificateRepositoryImplTest {
                 });
     }
 
-    @Test
+//    @Test
     void findAndSortGiftsByName() {
         String namePrefix = "1";
 
@@ -79,7 +79,7 @@ class GiftCertificateRepositoryImplTest {
         });
     }
 
-    @Test
+//    @Test
     public void findAndSortGiftByDescription() {
         String descriptionPrefix = "1";
 
@@ -123,7 +123,7 @@ class GiftCertificateRepositoryImplTest {
         });
     }
 
-    @Test
+//    @Test
     public void findAndSortGiftByGiftNameAndDescription() {
         String namePrefix = "1";
         String descriptionPrefix = "1";

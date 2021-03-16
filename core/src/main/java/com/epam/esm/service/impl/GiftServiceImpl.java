@@ -60,6 +60,9 @@ public class GiftServiceImpl implements GiftService {
     @Transactional(readOnly = true)
     public GiftCertificateDto getGiftById(Long giftId) {
         GiftCertificateEntity giftById = giftCertificateJpaRepository.findGiftCertificateEntityById(giftId);
+        if (giftById == null){
+            throw new GiftNotFoundException(giftId.toString());
+        }
         return EntityConverter.convertGiftEntityToDto(giftById);
     }
 

@@ -9,6 +9,26 @@ repositories {
     jcenter()
 }
 
+bootJar {
+    mainClassName = 'com.epam.esm.GiftApplication'
+}
+
+//bootJar {
+//    enabled = false
+//}
+//
+//jar {
+//    manifest {
+//        attributes 'Implementation-Title': 'Gradle Quickstart',
+//                'Main-Class': 'com.epam.esm.GiftApplication'
+//    }
+//    enabled = true
+//}
+
+//springBoot {
+//    mainClassName = "com.epam.esm.GiftApplication"
+//}
+
 subprojects {
     group = 'com.epam.esm'
     version = '0.0.1-SNAPSHOT'
