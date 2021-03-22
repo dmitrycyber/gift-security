@@ -3,3 +3,4 @@ rootProject.name = 'gift-boot'
 include "api"
 include "core"
 
+#for jenkins
