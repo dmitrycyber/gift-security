@@ -52,6 +52,7 @@ public class GiftControllerImpl implements GiftController {
                 : giftService.getAllGifts(pageNumber, pageSize);
 
         allGifts.forEach(this::addSelfLinks);
+        System.out.println("qwe");
         return ResponseEntity.ok(allGifts);
     }
 
