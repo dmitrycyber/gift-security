@@ -44,6 +44,10 @@ public class GiftControllerImpl implements GiftController {
     public ResponseEntity<List<GiftCertificateDto>> allGifts(
             @Valid PaginationDto paginationDto,
             @Valid GiftSearchDto giftSearchDto) {
+
+        String testString = null;
+        testString.contains("123");
+
         Integer pageNumber = paginationDto.getPageNumber();
         Integer pageSize = paginationDto.getPageSize();
 
