@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
+import java.net.Socket;
+
 
 @EnableResourceServer
 @EnableAuthorizationServer
@@ -14,7 +16,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 public class GiftApplication {
     public static void main(String[] args) {
         testMethod("qwe");
-
         SpringApplication.run(GiftApplication.class, args);
     }
 
