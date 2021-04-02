@@ -45,9 +45,6 @@ public class GiftControllerImpl implements GiftController {
             @Valid PaginationDto paginationDto,
             @Valid GiftSearchDto giftSearchDto) {
 
-        String testString = null;
-        testString.contains("123");
-
         Integer pageNumber = paginationDto.getPageNumber();
         Integer pageSize = paginationDto.getPageSize();
 

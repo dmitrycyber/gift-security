@@ -13,6 +13,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @EntityScan(basePackages = {"com.epam.esm.model.entity"})
 public class GiftApplication {
     public static void main(String[] args) {
+        String testString = null;
+        testString.contains("123");
+
         SpringApplication.run(GiftApplication.class, args);
     }
 }
