@@ -1,0 +1,17 @@
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+    implementation project(':core')
+    implementation group: 'io.swagger.core.v3', name: 'swagger-models', version: '2.1.2'
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+    implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.1.2'
+}
+
+test {
+    useJUnitPlatform()
+}
